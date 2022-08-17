@@ -1,22 +1,24 @@
-import type { ConcreteRequest } from "./RelayConcreteNode";
+import type { ConcreteRequest } from './RelayConcreteNode';
+import type { JSResourceReference } from './JSResourceReference';
 
 /**
  * Represents a single operation used to processing and normalize runtime
  * request results.
  */
 export interface NormalizationOperation {
-    readonly kind: string; // "Operation";
+    readonly kind: 'Operation';
     readonly name: string;
     readonly argumentDefinitions: ReadonlyArray<NormalizationLocalArgumentDefinition>;
     readonly selections: ReadonlyArray<NormalizationSelection>;
+    readonly clientAbstractTypes?: {
+        readonly [key: string]: ReadonlyArray<string>;
+    };
 }
 
-export type NormalizationHandle =
-    | NormalizationScalarHandle
-    | NormalizationLinkedHandle;
+export type NormalizationHandle = NormalizationScalarHandle | NormalizationLinkedHandle;
 
 export interface NormalizationLinkedHandle {
-    readonly kind: string; // "LinkedHandle";
+    readonly kind: 'LinkedHandle';
     readonly alias?: string | null | undefined;
     readonly name: string;
     readonly args?: ReadonlyArray<NormalizationArgument> | null | undefined;
@@ -29,7 +31,7 @@ export interface NormalizationLinkedHandle {
 }
 
 export interface NormalizationScalarHandle {
-    readonly kind: string; // "ScalarHandle";
+    readonly kind: 'ScalarHandle';
     readonly alias?: string | null | undefined;
     readonly name: string;
     readonly args?: ReadonlyArray<NormalizationArgument> | null | undefined;
@@ -48,37 +50,34 @@ export type NormalizationArgument =
     | NormalizationVariableArgument;
 
 export interface NormalizationCondition {
-    readonly kind: string; // "Condition";
+    readonly kind: 'Condition';
     readonly passingValue: boolean;
     readonly condition: string;
     readonly selections: ReadonlyArray<NormalizationSelection>;
 }
 
 export interface NormalizationClientExtension {
-    readonly kind: string; // "ClientExtension";
+    readonly kind: 'ClientExtension';
     readonly selections: ReadonlyArray<NormalizationSelection>;
 }
 
-export type NormalizationField =
-    | NormalizationFlightField
-    | NormalizationScalarField
-    | NormalizationLinkedField;
+export type NormalizationField = NormalizationFlightField | NormalizationScalarField | NormalizationLinkedField;
 
 export interface NormalizationInlineFragment {
-    readonly kind: string; // "InlineFragment";
+    readonly kind: 'InlineFragment';
     readonly selections: ReadonlyArray<NormalizationSelection>;
     readonly type: string;
     readonly abstractKey?: string | null | undefined;
 }
 
 export interface NormalizationFragmentSpread {
-    readonly kind: string; // "FragmentSpread";
+    readonly kind: 'FragmentSpread';
     readonly fragment: NormalizationSplitOperation;
     readonly args?: ReadonlyArray<NormalizationArgument> | null | undefined;
 }
 
 export interface NormalizationLinkedField {
-    readonly kind: string; // "LinkedField";
+    readonly kind: 'LinkedField';
     readonly alias?: string | null | undefined;
     readonly name: string;
     readonly storageKey?: string | null | undefined;
@@ -89,33 +88,38 @@ export interface NormalizationLinkedField {
 }
 
 export interface NormalizationActorChange {
-    readonly kind: string; // "ActorChange";
+    readonly kind: 'ActorChange';
     readonly linkedField: NormalizationLinkedField;
 }
 
 export interface NormalizationModuleImport {
     readonly args?: ReadonlyArray<NormalizationArgument> | null | undefined;
-    readonly kind: string; // "ModuleImport";
+    readonly kind: 'ModuleImport';
     readonly documentName: string;
     readonly fragmentPropName: string;
     readonly fragmentName: string;
+    readonly componentModuleProvider?: () => unknown | Promise<unknown> | JSResourceReference<unknown>;
+    readonly operationModuleProvider?: () =>
+        | NormalizationRootNode
+        | Promise<NormalizationRootNode>
+        | JSResourceReference<NormalizationRootNode>;
 }
 
 export interface NormalizationListValueArgument {
-    readonly kind: string; // "ListValue";
+    readonly kind: 'ListValue';
     readonly name: string;
     readonly items: ReadonlyArray<NormalizationArgument | null>;
 }
 
 export interface NormalizationLiteralArgument {
-    readonly kind: string; // "Literal";
+    readonly kind: 'Literal';
     readonly name: string;
     readonly type?: string | null | undefined;
     readonly value: any;
 }
 
 export interface NormalizationLocalArgumentDefinition {
-    readonly kind: string; // "LocalArgument";
+    readonly kind: 'LocalArgument';
     readonly name: string;
     readonly defaultValue: any;
 }
@@ -131,7 +135,7 @@ export type NormalizationNode =
     | NormalizationStream;
 
 export interface NormalizationScalarField {
-    readonly kind: string; // "ScalarField";
+    readonly kind: 'ScalarField';
     readonly alias?: string | null | undefined;
     readonly name: string;
     readonly args?: ReadonlyArray<NormalizationArgument> | null | undefined;
@@ -139,7 +143,7 @@ export interface NormalizationScalarField {
 }
 
 export interface NormalizationFlightField {
-    readonly kind: string; // "FlightField";
+    readonly kind: 'FlightField';
     readonly alias?: string | null | undefined;
     readonly name: string;
     readonly args?: ReadonlyArray<NormalizationArgument> | null | undefined;
@@ -148,12 +152,12 @@ export interface NormalizationFlightField {
 
 export interface NormalizationClientComponent {
     readonly args?: ReadonlyArray<NormalizationArgument> | null | undefined;
-    readonly kind: string; // "ClientComponent";
+    readonly kind: 'ClientComponent';
     readonly fragment: NormalizationNode;
 }
 
 export interface NormalizationTypeDiscriminator {
-    readonly kind: string; // "TypeDiscriminator";
+    readonly kind: 'TypeDiscriminator';
     readonly abstractKey: string;
 }
 
@@ -174,7 +178,7 @@ export type NormalizationSelection =
 
 export interface NormalizationSplitOperation {
     readonly argumentDefinitions?: ReadonlyArray<NormalizationLocalArgumentDefinition>;
-    readonly kind: string; // "SplitOperation";
+    readonly kind: 'SplitOperation';
     readonly name: string;
     readonly metadata: { readonly [key: string]: unknown } | null | undefined;
     readonly selections: ReadonlyArray<NormalizationSelection>;
@@ -182,27 +186,27 @@ export interface NormalizationSplitOperation {
 
 export interface NormalizationStream {
     readonly if: string | null;
-    readonly kind: string; // "Stream";
+    readonly kind: 'Stream';
     readonly label: string;
     readonly selections: ReadonlyArray<NormalizationSelection>;
 }
 
 export interface NormalizationDefer {
     readonly if: string | null;
-    readonly kind: string; // "Defer";
+    readonly kind: 'Defer';
     readonly label: string;
     readonly selections: ReadonlyArray<NormalizationSelection>;
 }
 
 export interface NormalizationVariableArgument {
-    readonly kind: string; // "Variable";
+    readonly kind: 'Variable';
     readonly name: string;
     readonly type?: string | null | undefined;
     readonly variableName: string;
 }
 
 export interface NormalizationObjectValueArgument {
-    readonly kind: string; // "ObjectValue";
+    readonly kind: 'ObjectValue';
     readonly name: string;
     readonly fields: ReadonlyArray<NormalizationArgument>;
 }
@@ -214,6 +218,4 @@ export type NormalizationSelectableNode =
     | NormalizationSplitOperation
     | NormalizationStream;
 
-export type NormalizationRootNode =
-    | ConcreteRequest
-    | NormalizationSplitOperation;
+export type NormalizationRootNode = ConcreteRequest | NormalizationSplitOperation;
