@@ -85,7 +85,7 @@ export {
     RecordSourceSelectorProxy,
     RelayContext,
     RequestDescriptor,
-    RequiredFieldLogger,
+    RelayFieldLogger,
     SelectorData,
     SelectorStoreUpdater,
     SingularReaderSelector,

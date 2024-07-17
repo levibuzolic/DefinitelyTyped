@@ -137,7 +137,7 @@ const environment = new Environment({
                 break;
         }
     },
-    requiredFieldLogger: arg => {
+    relayFieldLogger: arg => {
         if (arg.kind === "missing_field.log") {
             console.log(arg.fieldPath, arg.owner);
         } else if (arg.kind === "missing_field.throw") {
